@@ -1,0 +1,4 @@
+[submodule "PER.Tracy.Native/lib/tracy"]
+	path = PER.Tracy.Native/lib/tracy
+	url = https://github.com/wolfpld/tracy
+	branch = tags/v0.8.2.1

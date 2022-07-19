@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <PackageId>PER.Tracy</PackageId>
+    <Version>0.8.2.1-preview</Version> <!-- preview because metalama -->
+    <Title>PER.Tracy</Title>
+    <Authors>ConfiG</Authors>
+    <Company>ConfiG</Company>
+    <RepositoryUrl>https://github.com/cgytrus/PER.Tracy</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Description>Unofficial C# bindings for Tracy</Description>
+
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Metalama.Framework.Sdk" Version="0.5.27-preview" />
+    <ProjectReference Include="..\PER.Tracy\PER.Tracy.csproj" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Pack="True" Include="..\LICENSE" PackagePath="\" />
+    <None Pack="True" Include="..\PER.Tracy.Native\build\win-x64\Release\*.dll" PackagePath="runtimes\win-x64\native" />
+    <None Pack="True" Include="..\PER.Tracy.Native\build\debian-x64\Release\*.so*" PackagePath="runtimes\debian-x64\native" />
+    <!-- this doesn't seem to actually work and idk how to make it work -->
+    <!-- sorry wolfpld -->
+    <None Pack="True" Include="..\PER.Tracy.Native\lib\tracy\LICENSE" PackagePath="runtimes\tracy" />
+  </ItemGroup>
+
+</Project>

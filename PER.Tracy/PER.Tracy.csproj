@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PackageId>PER.Tracy.Redist</PackageId>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" />
+    <PackageReference Include="Metalama.Framework" Version="0.5.27-preview" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PER.Tracy.Native\PER.Tracy.Native.csproj" ReferenceOutputAssembly="false" />
+  </ItemGroup>
+
+</Project>
