@@ -141,6 +141,9 @@ public class ProfiledWeaver : IAspectWeaver {
         }
 
         public override SyntaxNode? VisitBlock(BlockSyntax node) {
+            if(node.Statements.Count <= 0)
+                return base.VisitBlock(node);
+
             IReadOnlyList<StatementSyntax> statements = node.Statements;
 
             foreach(Call call in FindOtherCalls(statements)) {
@@ -238,6 +241,9 @@ public class ProfiledWeaver : IAspectWeaver {
         private int _zoneIndex;
 
         public override SyntaxNode? VisitBlock(BlockSyntax node) {
+            if(node.Statements.Count <= 0)
+                return base.VisitBlock(node);
+
             List<StatementSyntax> statements = node.Statements.ToList();
 
             string zoneName = GetZoneName(_zoneIndex);
