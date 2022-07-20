@@ -58,6 +58,7 @@ internal static class RewriterFix {
                         // lmaooo this was NamespaceDeclarationSyntax so it broke with file scoped namespaces
                         // i had to copy the entire decompiled code just to fix this
                         // upd 19.07.2022: updated to 0.5.27-preview, they still didn't fix this lol
+                        // upd 20.07.2022, 0.5.28-preview: no fix
                         case BaseNamespaceDeclarationSyntax:
                             return base.Visit(node);
                     }

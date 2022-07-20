@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" PrivateAssets="All" />
-    <PackageReference Include="Metalama.Framework" Version="0.5.27-preview" />
+    <PackageReference Include="Metalama.Framework" Version="0.5.28-preview" />
   </ItemGroup>
 
 </Project>

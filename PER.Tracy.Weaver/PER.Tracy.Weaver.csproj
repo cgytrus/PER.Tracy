@@ -7,32 +7,32 @@
     <Nullable>enable</Nullable>
 
     <PackageId>PER.Tracy</PackageId>
-    <Version>0.8.2.1-preview</Version> <!-- preview because metalama -->
+    <Version>0.1.0-preview+tracy.0.8.2.1</Version> <!-- preview because metalama -->
     <Title>PER.Tracy</Title>
     <Authors>ConfiG</Authors>
     <Company>ConfiG</Company>
+    <Copyright>Copyright (c) ConfiG 2022</Copyright>
     <RepositoryUrl>https://github.com/cgytrus/PER.Tracy</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Description>Unofficial C# bindings for Tracy</Description>
+    <PackageTags>code generation;profiling;metalama;gamedev;game development</PackageTags>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" PrivateAssets="All" />
-    <PackageReference Include="Metalama.Framework.Sdk" Version="0.5.27-preview" />
+    <PackageReference Include="Metalama.Framework.Sdk" Version="0.5.28-preview" />
     <ProjectReference Include="..\PER.Tracy\PER.Tracy.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Pack="True" Include="..\LICENSE" PackagePath="\" />
-    <None Pack="True" Include="..\PER.Tracy.Native\build\win-x64\Release\*.dll" PackagePath="runtimes\win-x64\native" />
-    <None Pack="True" Include="..\PER.Tracy.Native\build\linux-x64\*.so" PackagePath="runtimes\linux-x64\native" />
-    <None Pack="True" Include="..\PER.Tracy.Native\build\linux-x64\*.so" PackagePath="runtimes\debian-x64\native" />
-    <!-- this doesn't seem to actually work and idk how to make it work -->
-    <!-- sorry wolfpld -->
-    <None Pack="True" Include="..\PER.Tracy.Native\lib\tracy\LICENSE" PackagePath="runtimes\tracy" />
+    <None Include="..\LICENSE" Pack="True" PackagePath="" />
+    <None Include="..\PER.Tracy.Native\build\win-x64\Release\*.dll" Pack="True" PackagePath="runtimes\win-x64\native" />
+    <None Include="..\PER.Tracy.Native\build\linux-x64\*.so" Pack="True" PackagePath="runtimes\linux-x64\native" />
+    <None Include="..\PER.Tracy.Native\build\linux-x64\*.so" Pack="True" PackagePath="runtimes\debian-x64\native" />
+    <Content Include="..\PER.Tracy.Native\lib\tracy\LICENSE" Pack="True" PackagePath="runtimes\tracy" />
   </ItemGroup>
 
 </Project>
