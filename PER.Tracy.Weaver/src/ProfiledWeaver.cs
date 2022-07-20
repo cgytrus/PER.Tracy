@@ -105,14 +105,11 @@ public class ProfiledWeaver : IAspectWeaver {
         return false;
     }
 
-    private static IEnumerable<Call> FindZoneCalls(IReadOnlyList<StatementSyntax> statements) =>
-        FindAllCalls(statements).Where(call => zoneCalls.Contains(call.name));
+    private static IEnumerable<Call> FindOtherCalls(IReadOnlyList<StatementSyntax> statements) =>
+        FindAllCalls(statements).Where(call => call.name != ZoneDefinitionName);
 
-    private static IEnumerable<(Call, int)> FindStringCalls(IReadOnlyList<StatementSyntax> statements) =>
-        FindAllCalls(statements)
-            .Where(call => stringCalls.TryGetValue(call.name, out int argIndex) && call.arguments
-                .Arguments[argIndex].Expression.IsKind(SyntaxKind.StringLiteralExpression))
-            .Select(call => (call, stringCalls[call.name]));
+    private static bool IsStringCall(Call call, out int argIndex) => stringCalls.TryGetValue(call.name, out argIndex) &&
+        call.arguments.Arguments[argIndex].Expression.IsKind(SyntaxKind.StringLiteralExpression);
 
     private class CreateFieldsRewriter : CSharpSyntaxRewriter {
         private readonly List<MemberDeclarationSyntax> _fields = new();
@@ -145,15 +142,19 @@ public class ProfiledWeaver : IAspectWeaver {
 
         public override SyntaxNode? VisitBlock(BlockSyntax node) {
             IReadOnlyList<StatementSyntax> statements = node.Statements;
-            foreach((Call call, int argIndex) in FindStringCalls(statements)) {
-                _fields.Add(CreateStringField(GetStringName(_stringIndex), call.arguments.Arguments[argIndex]));
-                _stringIndex++;
+
+            foreach(Call call in FindOtherCalls(statements)) {
+                if(!IsStringCall(call, out int argIndex))
+                    continue;
+                _fields.Add(CreateStringField(GetStringName(_stringIndex++), call.arguments.Arguments[argIndex]));
             }
+
             if(!TryFindDefinition(statements, node, out Call definition))
                 return base.VisitBlock(node);
-            _fields.Add(CreateLocationField(GetLocationName(_zoneIndex), GetFullSyntaxName(node),
+
+            _fields.Add(CreateLocationField(GetLocationName(_zoneIndex++), GetFullSyntaxName(node),
                 definition.arguments, definition.location));
-            _zoneIndex++;
+
             return base.VisitBlock(node);
         }
 
@@ -239,39 +240,29 @@ public class ProfiledWeaver : IAspectWeaver {
         public override SyntaxNode? VisitBlock(BlockSyntax node) {
             List<StatementSyntax> statements = node.Statements.ToList();
 
-            ReplaceStringsInCalls(statements);
+            string zoneName = GetZoneName(_zoneIndex);
+
+            foreach(Call call in FindOtherCalls(statements).ToImmutableHashSet()) {
+                List<ArgumentSyntax> args = call.arguments.Arguments.ToList();
+
+                if(IsStringCall(call, out int argIndex))
+                    args[argIndex] =
+                        SyntaxFactory.Argument(SyntaxFactory.IdentifierName(GetStringName(_stringIndex++)));
+
+                if(zoneCalls.Contains(call.name))
+                    args.Insert(0, SyntaxFactory.Argument(SyntaxFactory.IdentifierName(zoneName)));
+
+                statements[statements.IndexOf(call.statement)] = SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.InvocationExpression(CreateProfilerExpression(call.name),
+                        call.arguments.WithArguments(SyntaxFactory.SeparatedList(args))));
+            }
 
             if(!TryFindDefinition(statements, node, out Call definition))
                 return base.VisitBlock(node.WithStatements(SyntaxFactory.List(statements)));
 
-            string zoneName = GetZoneName(_zoneIndex);
-            string locationName = GetLocationName(_zoneIndex);
-
-            AddZonesToCalls(statements, zoneName);
-
-            _zoneIndex++;
             statements.Remove(definition.statement);
             return base.VisitBlock(CreateZone(node.WithStatements(SyntaxFactory.List(statements)), zoneName,
-                locationName));
-        }
-
-        private void ReplaceStringsInCalls(List<StatementSyntax> statements) {
-            foreach((Call call, int argIndex) in FindStringCalls(statements).ToImmutableHashSet()) {
-                List<ArgumentSyntax> args = call.arguments.Arguments.ToList();
-                args[argIndex] = SyntaxFactory.Argument(SyntaxFactory.IdentifierName(GetStringName(_stringIndex)));
-                statements[statements.IndexOf(call.statement)] = SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(CreateProfilerExpression(call.name),
-                        call.arguments.WithArguments(SyntaxFactory.SeparatedList(args))));
-                _stringIndex++;
-            }
-        }
-
-        private static void AddZonesToCalls(List<StatementSyntax> statements, string zoneName) {
-            foreach(Call call in FindZoneCalls(statements).ToImmutableHashSet())
-                statements[statements.IndexOf(call.statement)] = SyntaxFactory.ExpressionStatement(
-                    SyntaxFactory.InvocationExpression(CreateProfilerExpression(call.name),
-                        call.arguments.AddArguments(
-                            SyntaxFactory.Argument(SyntaxFactory.IdentifierName(zoneName)))));
+                GetLocationName(_zoneIndex++)));
         }
 
         private static BlockSyntax CreateZone(BlockSyntax block, string zoneName, string locationName) =>

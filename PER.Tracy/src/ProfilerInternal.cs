@@ -36,16 +36,16 @@ public static class ProfilerInternal {
     public static void EndScopedZone(nuint zone) => TracyDeleteZone(zone);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ZoneText(nuint text, nuint zone) => TracyZoneText(zone, text);
+    public static void ZoneText(nuint zone, nuint text) => TracyZoneText(zone, text);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ZoneName(nuint name, nuint zone) => TracyZoneName(zone, name);
+    public static void ZoneName(nuint zone, nuint name) => TracyZoneName(zone, name);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ZoneColor(uint color, nuint zone) => TracyZoneColor(zone, color);
+    public static void ZoneColor(nuint zone, uint color) => TracyZoneColor(zone, color);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ZoneValue(ulong value, nuint zone) => TracyZoneValue(zone, value);
+    public static void ZoneValue(nuint zone, ulong value) => TracyZoneValue(zone, value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void FrameMark() => TracyFrameMark();
