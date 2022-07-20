@@ -1,24 +1,11 @@
 // ReSharper disable CppInconsistentNaming
 #include <Tracy.hpp>
 
-// TODO bro screw linux im too tired for this
-// build error is:
-/*
-/usr/bin/ld: lib/tracy/libTracyClient.a(TracyClient.cpp.o): relocation R_X86_64_TPOFF32 against symbol
-             `_ZN5tracy8s_gpuCtxE' can not be used when making a shared object; recompile with -fPIC
-collect2: error: ld returned 1 exit status
-make[2]: *** [CMakeFiles/PER.Tracy.Native.dir/build.make:85: libPER.Tracy.Native.so] Error 1
-make[1]: *** [CMakeFiles/Makefile2:96: CMakeFiles/PER.Tracy.Native.dir/all] Error 2
-make: *** [Makefile:130: all] Error 2
- */
 #if defined(_MSC_VER)
 #define PER_EXPORT extern "C" __declspec(dllexport)
-#define PER_CALL __cdecl
-#elif defined(__GNUC__)
-#define PER_EXPORT extern "C" __attribute__((visibility("default")))
-#define PER_CALL
+#define PER_CALL __stdcall
 #else
-#define PER_EXPORT
+#define PER_EXPORT extern "C" __attribute__((visibility("default")))
 #define PER_CALL
 #endif
 

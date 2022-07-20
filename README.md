@@ -50,8 +50,8 @@ To enable automatic zones, define `TracyAutoZones`:
 
 1. clone the repo `git clone https://github.com/cgytrus/PER.Tracy`
 2. cd into native project directory `cd ./PER.Tracy/PER.Tracy.Native`
-3. create build directory `mkdir ./build/win-x64`
-4. cd into build directory `cd ./build/win-x64`
+3. create build directory `mkdir ./build/win-x64`/`mkdir ./build/linux-x64`
+4. cd into build directory `cd ./build/win-x64`/`cd ./build/linux-x64`
 5. configure cmake `cmake ../../`
-6. build native project `cmake --build . --target ALL_BUILD --config Release`
+6. build native project `cmake --build . --config Release`
 7. build solution `cd ../../ && dotnet build -c Release`

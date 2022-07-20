@@ -22,7 +22,7 @@ public static class ProfilerInternal {
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static nuint CreateLocation(string? name, uint color, string method, string file, uint line) =>
-        _instance.TracyCreateLocation(CreateString(name), CreateString(method), CreateString(file), line, color);
+        TracyCreateLocation(CreateString(name), CreateString(method), CreateString(file), line, color);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static nuint CreateString(string? str) {
@@ -30,164 +30,113 @@ public static class ProfilerInternal {
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static nuint StartScopedZone(nuint location) => _instance.TracyCreateZone(location);
+    public static nuint StartScopedZone(nuint location) => TracyCreateZone(location);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void EndScopedZone(nuint zone) => _instance.TracyDeleteZone(zone);
+    public static void EndScopedZone(nuint zone) => TracyDeleteZone(zone);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ZoneText(nuint text, nuint zone) => _instance.TracyZoneText(zone, text);
+    public static void ZoneText(nuint text, nuint zone) => TracyZoneText(zone, text);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ZoneName(nuint name, nuint zone) => _instance.TracyZoneName(zone, name);
+    public static void ZoneName(nuint name, nuint zone) => TracyZoneName(zone, name);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ZoneColor(uint color, nuint zone) => _instance.TracyZoneColor(zone, color);
+    public static void ZoneColor(uint color, nuint zone) => TracyZoneColor(zone, color);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void ZoneValue(ulong value, nuint zone) => _instance.TracyZoneValue(zone, value);
+    public static void ZoneValue(ulong value, nuint zone) => TracyZoneValue(zone, value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void FrameMark() => _instance.TracyFrameMark();
+    public static void FrameMark() => TracyFrameMark();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void FrameMarkNamed(nuint name) => _instance.TracyFrameMarkNamed(name);
+    public static void FrameMarkNamed(nuint name) => TracyFrameMarkNamed(name);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void FrameMarkStart(nuint name) => _instance.TracyFrameMarkStart(name);
+    public static void FrameMarkStart(nuint name) => TracyFrameMarkStart(name);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void FrameMarkEnd(nuint name) => _instance.TracyFrameMarkEnd(name);
+    public static void FrameMarkEnd(nuint name) => TracyFrameMarkEnd(name);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void TracyPlot(nuint name, long value) => _instance.TracyPlotData(name, value);
+    public static void TracyPlot(nuint name, long value) => TracyPlotData(name, value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void TracyPlotConfig(nuint name, Profiler.PlotFormatType type) => _instance.TracyConfigurePlot(name, type);
+    public static void TracyPlotConfig(nuint name, Profiler.PlotFormatType type) => TracyConfigurePlot(name, type);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void TracyAppInfo(nuint text) => _instance.TracyMessageAppInfo(text);
+    public static void TracyAppInfo(nuint text) => TracyMessageAppInfo(text);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void TracyMessage(nuint text) => _instance.TracyTracyMessage(text);
+    public static void TracyMessage(nuint text) => TracyTracyMessage(text);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void TracyMessage(nuint text, uint color) => _instance.TracyTracyMessageColor(text, color);
+    public static void TracyMessage(nuint text, uint color) => TracyTracyMessageColor(text, color);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void TracyAlloc(nuint ptr, nuint size) => _instance.TracyMemAlloc(ptr, size);
+    public static void TracyAlloc(nuint ptr, nuint size) => TracyMemAlloc(ptr, size);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void TracyFree(nuint ptr) => _instance.TracyMemFree(ptr);
+    public static void TracyFree(nuint ptr) => TracyMemFree(ptr);
 
 #region interop
 
-    // setup for multiple architectures/oses
-    // TODO: actually implement it
+    private const string LibName = "PER.Tracy.Native";
 
-    private interface IProfiler {
-        nuint TracyCreateLocation(nuint name, nuint method, nuint file, uint line, uint color);
-        nuint TracyCreateZone(nuint location);
-        void TracyDeleteZone(nuint ptr);
-        void TracyZoneText(nuint zone, nuint text);
-        void TracyZoneName(nuint zone, nuint name);
-        void TracyZoneColor(nuint zone, uint color);
-        void TracyZoneValue(nuint zone, ulong value);
-        void TracyFrameMark();
-        void TracyFrameMarkNamed(nuint name);
-        void TracyFrameMarkStart(nuint name);
-        void TracyFrameMarkEnd(nuint name);
-        void TracyPlotData(nuint name, long value);
-        void TracyConfigurePlot(nuint name, Profiler.PlotFormatType type);
-        void TracyMessageAppInfo(nuint text);
-        void TracyTracyMessage(nuint text);
-        void TracyTracyMessageColor(nuint text, uint color);
-        void TracyMemAlloc(nuint ptr, nuint size);
-        void TracyMemFree(nuint ptr);
-    }
+    [DllImport(LibName)]
+    private static extern nuint TracyCreateLocation(nuint name, nuint method, nuint file, uint line, uint color);
 
-    private static IProfiler _instance = new ProfilerX64();
+    [DllImport(LibName)]
+    private static extern nuint TracyCreateZone(nuint location);
 
-    private const string MainLibName = "PER.Tracy.Native";
-    private const CallingConvention CallConv = CallingConvention.Cdecl;
+    [DllImport(LibName)]
+    private static extern void TracyDeleteZone(nuint ptr);
 
-    private class ProfilerX64 : IProfiler {
-        private const string LibName = MainLibName;
+    [DllImport(LibName)]
+    private static extern void TracyZoneText(nuint zone, nuint text);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyCreateLocation))]
-        private static extern nuint TracyCreateLocationInternal(nuint name, nuint method, nuint file, uint line, uint color);
+    [DllImport(LibName)]
+    private static extern void TracyZoneName(nuint zone, nuint name);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyCreateZone))]
-        private static extern nuint TracyCreateZoneInternal(nuint location);
+    [DllImport(LibName)]
+    private static extern void TracyZoneColor(nuint zone, uint color);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyDeleteZone))]
-        private static extern void TracyDeleteZoneInternal(nuint ptr);
+    [DllImport(LibName)]
+    private static extern void TracyZoneValue(nuint zone, ulong value);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyZoneText))]
-        private static extern void TracyZoneTextInternal(nuint zone, nuint text);
+    [DllImport(LibName)]
+    private static extern void TracyFrameMark();
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyZoneName))]
-        private static extern void TracyZoneNameInternal(nuint zone, nuint name);
+    [DllImport(LibName)]
+    private static extern void TracyFrameMarkNamed(nuint name);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyZoneColor))]
-        private static extern void TracyZoneColorInternal(nuint zone, uint color);
+    [DllImport(LibName)]
+    private static extern void TracyFrameMarkStart(nuint name);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyZoneValue))]
-        private static extern void TracyZoneValueInternal(nuint zone, ulong value);
+    [DllImport(LibName)]
+    private static extern void TracyFrameMarkEnd(nuint name);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyFrameMark))]
-        private static extern void TracyFrameMarkInternal();
+    [DllImport(LibName)]
+    private static extern void TracyPlotData(nuint name, long value);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyFrameMarkNamed))]
-        private static extern void TracyFrameMarkNamedInternal(nuint name);
+    [DllImport(LibName)]
+    private static extern void TracyConfigurePlot(nuint name, Profiler.PlotFormatType type);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyFrameMarkStart))]
-        private static extern void TracyFrameMarkStartInternal(nuint name);
+    [DllImport(LibName)]
+    private static extern void TracyMessageAppInfo(nuint text);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyFrameMarkEnd))]
-        private static extern void TracyFrameMarkEndInternal(nuint name);
+    [DllImport(LibName)]
+    private static extern void TracyTracyMessage(nuint text);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyPlotData))]
-        private static extern void TracyPlotDataInternal(nuint name, long value);
+    [DllImport(LibName)]
+    private static extern void TracyTracyMessageColor(nuint text, uint color);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyConfigurePlot))]
-        private static extern void TracyConfigurePlotInternal(nuint name, Profiler.PlotFormatType type);
+    [DllImport(LibName)]
+    private static extern void TracyMemAlloc(nuint ptr, nuint size);
 
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyMessageAppInfo))]
-        private static extern void TracyMessageAppInfoInternal(nuint text);
-
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyTracyMessage))]
-        private static extern void TracyTracyMessageInternal(nuint text);
-
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyTracyMessageColor))]
-        private static extern void TracyTracyMessageColorInternal(nuint text, uint color);
-
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyMemAlloc))]
-        private static extern void TracyMemAllocInternal(nuint ptr, nuint size);
-
-        [DllImport(LibName, CallingConvention = CallConv, ExactSpelling = false, EntryPoint = nameof(TracyMemFree))]
-        private static extern void TracyMemFreeInternal(nuint ptr);
-
-        public nuint TracyCreateLocation(nuint name, nuint method, nuint file, uint line, uint color) =>
-            TracyCreateLocationInternal(name, method, file, line, color);
-        public nuint TracyCreateZone(nuint location) => TracyCreateZoneInternal(location);
-        public void TracyDeleteZone(nuint ptr) => TracyDeleteZoneInternal(ptr);
-        public void TracyZoneText(nuint zone, nuint text) => TracyZoneTextInternal(zone, text);
-        public void TracyZoneName(nuint zone, nuint name) => TracyZoneNameInternal(zone, name);
-        public void TracyZoneColor(nuint zone, uint color) => TracyZoneColorInternal(zone, color);
-        public void TracyZoneValue(nuint zone, ulong value) => TracyZoneValueInternal(zone, value);
-        public void TracyFrameMark() => TracyFrameMarkInternal();
-        public void TracyFrameMarkNamed(nuint name) => TracyFrameMarkNamedInternal(name);
-        public void TracyFrameMarkStart(nuint name) => TracyFrameMarkStartInternal(name);
-        public void TracyFrameMarkEnd(nuint name) => TracyFrameMarkEndInternal(name);
-        public void TracyPlotData(nuint name, long value) => TracyPlotDataInternal(name, value);
-        public void TracyConfigurePlot(nuint name, Profiler.PlotFormatType type) => TracyConfigurePlotInternal(name, type);
-        public void TracyMessageAppInfo(nuint text) => TracyMessageAppInfoInternal(text);
-        public void TracyTracyMessage(nuint text) => TracyTracyMessageInternal(text);
-        public void TracyTracyMessageColor(nuint text, uint color) => TracyTracyMessageColorInternal(text, color);
-        public void TracyMemAlloc(nuint ptr, nuint size) => TracyMemAllocInternal(ptr, size);
-        public void TracyMemFree(nuint ptr) => TracyMemFreeInternal(ptr);
-    }
+    [DllImport(LibName)]
+    private static extern void TracyMemFree(nuint ptr);
 
 #endregion
 }

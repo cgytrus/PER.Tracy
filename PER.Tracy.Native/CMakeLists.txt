@@ -18,3 +18,7 @@ option(TRACY_CALLSTACK "" OFF)
 
 add_subdirectory(lib/tracy)
 target_link_libraries(${PROJECT_NAME} Tracy::TracyClient)
+
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(TracyClient PUBLIC -fPIC)
+endif()

@@ -2,8 +2,6 @@
 
 using JetBrains.Annotations;
 
-// are you dumb
-// ReSharper disable once CheckNamespace
 namespace PER.Tracy;
 
 [PublicAPI]
@@ -15,10 +13,9 @@ public static class Profiler {
         Percentage
     }
 
-#region public api
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ZoneScoped(string? name = null, uint color = 0) { }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void ZoneScoped(uint color) { }
 
@@ -63,6 +60,4 @@ public static class Profiler {
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void TracyFree(nuint ptr) { }
-
-#endregion
 }
