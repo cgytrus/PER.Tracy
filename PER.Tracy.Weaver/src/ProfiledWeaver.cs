@@ -18,12 +18,13 @@ namespace PER.Tracy.Weaver;
 public class ProfiledWeaver : IAspectWeaver {
     private static bool _autoZones;
 
-    public void Transform(AspectWeaverContext context) {
+    public Task TransformAsync(AspectWeaverContext context) {
         if(!context.Project.PreprocessorSymbols.Contains("TracyEnable"))
-            return;
+            return Task.CompletedTask;
         _autoZones = context.Project.PreprocessorSymbols.Contains("TracyAutoZones");
-        context.RewriteAspectTargetsBruh(new CreateFieldsRewriter());
-        context.RewriteAspectTargetsBruh(new ReplaceCallsRewriter());
+        context.RewriteAspectTargetsAsync(new CreateFieldsRewriter());
+        context.RewriteAspectTargetsAsync(new ReplaceCallsRewriter());
+        return Task.CompletedTask;
     }
 
     private const string ZoneDefinitionName = "ZoneScoped";

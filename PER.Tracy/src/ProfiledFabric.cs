@@ -1,9 +1,11 @@
-﻿using Metalama.Framework.Fabrics;
+﻿using JetBrains.Annotations;
 
-namespace PER.Tracy.Weaver;
+using Metalama.Framework.Fabrics;
 
-// ReSharper disable once UnusedType.Global
+namespace PER.Tracy;
+
+[UsedImplicitly]
 public class ProfiledFabric : TransitiveProjectFabric {
     public override void AmendProject(IProjectAmender amender) =>
-        amender.With(project => project.Types).AddAspect<ProfiledAttribute>();
+        amender.Outbound.SelectMany(project => project.Types).AddAspect<ProfiledAttribute>();
 }

@@ -7,11 +7,11 @@
     <Nullable>enable</Nullable>
 
     <PackageId>PER.Tracy</PackageId>
-    <Version>0.1.0-preview+tracy.0.8.2.1</Version> <!-- preview because metalama -->
+    <Version>0.2.0-rc+tracy.cf0e6b6</Version> <!-- rc because metalama -->
     <Title>PER.Tracy</Title>
     <Authors>ConfiG</Authors>
     <Company>ConfiG</Company>
-    <Copyright>Copyright (c) ConfiG 2022</Copyright>
+    <Copyright>Copyright (c) ConfiG 2023</Copyright>
     <RepositoryUrl>https://github.com/cgytrus/PER.Tracy</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
@@ -22,8 +22,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2022.1.0" PrivateAssets="All" />
-    <PackageReference Include="Metalama.Framework.Sdk" Version="0.5.28-preview" />
+    <PackageReference Include="JetBrains.Annotations" Version="2022.3.1" PrivateAssets="All" />
+    <PackageReference Include="Metalama.Framework.Sdk" Version="2023.1.8-rc" />
     <ProjectReference Include="..\PER.Tracy\PER.Tracy.csproj" PrivateAssets="All" />
   </ItemGroup>
 
